@@ -42,13 +42,14 @@ def prepare_tokenizer(cfg: DictConfig) -> DictConfig:
 
 def prepare_model(cfg: DictConfig) -> Tuple[Any, pl.Trainer]:
 
-    model_path = cfg.pretrained_model.path
-    assert model_path.endswith('.nemo') or model_path.endswith('.ckpt')
-    with open_dict(cfg):
-        if model_path.endswith('.nemo'):
-            cfg.nemo.init_from_nemo_model = model_path
-        else:
-            cfg.nemo.init_from_ptl_ckpt = model_path
+    if cfg.get('pretrained_model', None):
+        model_path = cfg.pretrained_model.path
+        assert model_path.endswith('.nemo') or model_path.endswith('.ckpt')
+        with open_dict(cfg):
+            if model_path.endswith('.nemo'):
+                cfg.nemo.init_from_nemo_model = model_path
+            else:
+                cfg.nemo.init_from_ptl_ckpt = model_path
     
     callbacks = []
     if cfg.early_stopping.patience > 0:

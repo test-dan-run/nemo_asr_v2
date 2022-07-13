@@ -14,8 +14,9 @@ def main(cfg):
     task.execute_remotely(queue_name=cfg.clearml.queue_name, clone=False, exit_process=True)
 
     # download model and datasets
-    clearml_model = Model(model_id=cfg.pretrained_model.model_clearml_id)
-    cfg.pretrained_model.path = clearml_model.get_local_copy()
+    if cfg.get('pretrained_model', None):
+        clearml_model = Model(model_id=cfg.pretrained_model.model_clearml_id)
+        cfg.pretrained_model.path = clearml_model.get_local_copy()
 
     dataset_splits = ['train', 'dev', 'test']
     for split in dataset_splits:
