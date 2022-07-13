@@ -90,24 +90,6 @@ def update_manifest_from_json(manifest_path: str) -> str:
 
     return new_manifest_path
 
-def train(cfg: DictConfig) -> Tuple[DictConfig, Any, pl.Trainer]:
-    logging.info(f'Hydra config: {OmegaConf.to_yaml(cfg)}')
-
-    # direct manifest paths
-    cfg.nemo.model.train_ds.manifest_filepath = update_manifest_from_json(cfg.dataset.train_ds_manifest_path)
-    cfg.nemo.model.validation_ds.manifest_filepath = update_manifest_from_json(cfg.dataset.valid_ds_manifest_path)
-    cfg.nemo.model.test_ds.manifest_filepath = update_manifest_from_json(cfg.dataset.test_ds_manifest_path)
-
-    # set up tokenizer
-    cfg = prepare_tokenizer(cfg)
-
-    # prep model initialisation
-    asr_model, trainer = prepare_model(cfg)
-
-    trainer.fit(asr_model)
-
-    return cfg, asr_model, trainer
-
 # def test(cfg: DictConfig, asr_model: Any = None, trainer: pl.Trainer = None) -> None:
 
 #     if asr_model is None and trainer is None:
@@ -158,8 +140,18 @@ def main(cfg):
     asr_model, trainer = None, None
 
     if cfg.task_type == 'training':
-        cfg, asr_model, trainer = train(cfg)
+        # direct manifest paths
+        cfg.nemo.model.train_ds.manifest_filepath = update_manifest_from_json(cfg.dataset.train_ds_manifest_path)
+        cfg.nemo.model.validation_ds.manifest_filepath = update_manifest_from_json(cfg.dataset.dev_ds_manifest_path)
+        cfg.nemo.model.test_ds.manifest_filepath = update_manifest_from_json(cfg.dataset.test_ds_manifest_path)
 
+        # set up tokenizer
+        cfg = prepare_tokenizer(cfg)
+
+        # prep model initialisation
+        asr_model, trainer = prepare_model(cfg)
+
+        trainer.fit(asr_model)
     # test(cfg, asr_model, trainer)
 
 if __name__ == '__main__':

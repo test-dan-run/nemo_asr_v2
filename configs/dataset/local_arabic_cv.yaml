@@ -1,4 +1,4 @@
 name: arabic_commonvoice_v10.0
 train_ds_manifest_path: /dataset/processed/wav_16k/train_manifest.json
-valid_ds_manifest_path: /dataset/processed/wav_16k/dev_manifest.json
+dev_ds_manifest_path: /dataset/processed/wav_16k/dev_manifest.json
 test_ds_manifest_path: /dataset/processed/wav_16k/test_manifest.json
