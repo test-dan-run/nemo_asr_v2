@@ -6,7 +6,7 @@ import os
 def main(cfg):
 
     task = Task.init(
-        project_name=cfg.clearml_project_name, task_name=cfg.clearml_task_name, 
+        project_name=cfg.clearml.project_name, task_name=cfg.clearml.task_name, 
         output_uri=cfg.clearml.output_uri, task_type=cfg.task_type
     )
     task.set_base_docker(cfg.clearml.base_docker_image)
@@ -21,7 +21,7 @@ def main(cfg):
     for split in dataset_splits:
         clearml_dataset = Dataset.get(dataset_id=cfg.dataset[f'{split}_clearml_id'])
         split_dir = clearml_dataset.get_local_copy()
-        cfg.nemo.model[f'{split}_ds']['manifest_filepath'] = os.path.join(split_dir, f'{split}_manifest.json')
+        cfg.dataset[f'{split}_ds_manifest_path'] = os.path.join(split_dir, f'{split}_manifest.json')
 
     from local_main import prepare_model, prepare_tokenizer, update_manifest_from_json
     asr_model, trainer = None, None
@@ -35,8 +35,8 @@ def main(cfg):
 
         # set up tokenizer
         cfg = prepare_tokenizer(cfg)
-        task.upload(name='tokenizer_model', artifact_object=os.path.join(cfg.nemo.model.tokenizer.dir, 'tokenizer.model'))
-        task.upload(name='tokenizer_vocab', artifact_object=os.path.join(cfg.nemo.model.tokenizer.dir, 'tokenizer.vocab'))
+        task.upload_artifact(name='tokenizer_model', artifact_object=os.path.join(cfg.nemo.model.tokenizer.dir, 'tokenizer.model'))
+        task.upload_artifact(name='tokenizer_vocab', artifact_object=os.path.join(cfg.nemo.model.tokenizer.dir, 'tokenizer.vocab'))
 
         # prep model initialisation
         asr_model, trainer = prepare_model(cfg)
