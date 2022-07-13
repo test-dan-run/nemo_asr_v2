@@ -1,0 +1,6 @@
+nemo_checkpoints/
+__pycache__/
+*.model
+*.vocab
+*.nemo
+*.txt

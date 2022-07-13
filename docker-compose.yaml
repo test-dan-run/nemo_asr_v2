@@ -1,0 +1,36 @@
+version: '3.4'
+
+services:
+
+  local:
+    stdin_open: true
+    tty: true
+    image: nemo:1.10.0
+    # runtime: nvidia
+    # environment:
+    #   NVIDIA_VISIBLE_DEVICES: 0
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    volumes:
+      - /mnt/c/projects/asr/nemo_asr_v2:/nemo_asr_v2
+      - /mnt/d/datasets/asr/commonvoice_v10/ar:/dataset
+    ulimits:
+      memlock: -1
+      stack: 67108864
+    shm_size: 16gb
+    command: python3 local_train.py
+
+  tensorboard:
+    stdin_open: true
+    tty: true
+    image: nemo:1.10.0
+    ports:
+      - 6006:6006
+    volumes:
+      - /mnt/c/projects/asr/nemo_asr_v2/nemo_checkpoints:/logs
+    command: >
+      bash -c 'sed -i "s/\"--bind_all\", default=True,/\"--bind_all\",/g" /opt/conda/lib/python3.8/site-packages/tensorboard/plugins/core/core_plugin.py
+      && tensorboard --logdir /logs --host 0.0.0.0 --port 6006'

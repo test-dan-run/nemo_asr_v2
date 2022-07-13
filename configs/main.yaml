@@ -1,0 +1,16 @@
+hydra:
+  run:
+    dir: '.'
+
+early_stopping:
+  patience: 20
+
+task_type: training
+
+defaults:
+  - dataset: local_arabic_cv
+  - tokenizer: local_bpe1024
+  - pretrained_model: conformer_bpe_transducer_1_10
+  - nemo: conformer_med_bpe_transducer
+
+name: ${nemo.name}_${dataset.name}
