@@ -1,0 +1,5 @@
+precomputed: false
+dir: ???
+type: bpe
+spe_type: unigram
+vocab_size: 128

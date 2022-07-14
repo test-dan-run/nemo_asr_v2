@@ -9,9 +9,9 @@ early_stopping:
 
 defaults:
   - dataset: remote_arabic_cv
-  - tokenizer: local_bpe1024
-  # - pretrained_model: remote_conformer_large_bpe_transducer_1_10
-  - nemo: conformer_large_bpe_transducer
+  - tokenizer: local_bpe128
+  - pretrained_model: remote_conformer_large_bpe_ctc_1_10
+  - nemo: conformer_large_bpe_ctc
 
 name: ${nemo.name}_${dataset.name}
 
