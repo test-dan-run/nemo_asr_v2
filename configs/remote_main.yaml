@@ -8,10 +8,10 @@ early_stopping:
   patience: 20
 
 defaults:
-  - dataset: remote_arabic_cv
+  - dataset: remote_arabic_all
   - tokenizer: local_bpe128
   - pretrained_model: remote_conformer_large_bpe_ctc_1_10
-  - nemo: conformer_large_bpe_ctc
+  - nemo: conformer_large_bpe_ctc_augmentor
 
 name: ${nemo.name}_${dataset.name}
 

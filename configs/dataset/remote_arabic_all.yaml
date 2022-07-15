@@ -1,0 +1,13 @@
+# name is based on the test dataset used
+name: arabic_commonvoice_v10.0
+
+# train data is tusni_msa + mediaspeech + common voice
+train_clearml_id: ecd065811d694180819dfca5505e2c0e
+# dev data is common voice only
+dev_clearml_id: aed67512dedf488da268fd1e21d0acd6
+# test data is common voice only
+test_clearml_id: 7a78d05734d542efa6d8e43989349be1
+
+train_ds_manifest_path: ???
+dev_ds_manifest_path: ???
+test_ds_manifest_path: ???
