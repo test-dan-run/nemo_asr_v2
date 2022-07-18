@@ -1,0 +1,4 @@
+name: arabic_commonvoice_v10.0
+train_ds_manifest_path: /home/daniel/Desktop/NeMo/id/train/train_manifest.json
+dev_ds_manifest_path: /home/daniel/Desktop/NeMo/id/dev/dev_manifest.json
+test_ds_manifest_path: /home/daniel/Desktop/NeMo/id/test/test_manifest.json
