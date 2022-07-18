@@ -1,8 +1,8 @@
 name: arabic_commonvoice_v10.0
 
-train_clearml_id: 709a1943cd0c4db18ec32cb17d978541
-dev_clearml_id: aed67512dedf488da268fd1e21d0acd6
-test_clearml_id: 7a78d05734d542efa6d8e43989349be1
+train_clearml_id: 6bc9d0f9fe5b425399130ff7a02d61e0
+dev_clearml_id: 88add16e4f934b348a50bf35c53b8429
+test_clearml_id: 26f6fc1946964341af30bfee6a04b3bf
 
 train_ds_manifest_path: ???
 dev_ds_manifest_path: ???

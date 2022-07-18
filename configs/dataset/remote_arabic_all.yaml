@@ -2,11 +2,11 @@
 name: arabic_commonvoice_v10.0
 
 # train data is tusni_msa + mediaspeech + common voice
-train_clearml_id: ecd065811d694180819dfca5505e2c0e
+train_clearml_id: e3aaf7387f144a2d841d57123d8c012d
 # dev data is common voice only
-dev_clearml_id: aed67512dedf488da268fd1e21d0acd6
+dev_clearml_id: 9a3300afe99b4a8cb85bf55ee95872bd
 # test data is common voice only
-test_clearml_id: 7a78d05734d542efa6d8e43989349be1
+test_clearml_id: 330b395d19254dc78534f4d6d4673234
 
 train_ds_manifest_path: ???
 dev_ds_manifest_path: ???
