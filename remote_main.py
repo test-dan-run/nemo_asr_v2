@@ -1,6 +1,7 @@
 from clearml import Task, Dataset, Model, StorageManager
 from utils.hydra import hydra_runner
 import os
+import shutil
 
 @hydra_runner(config_path='./configs', config_name='remote_main')
 def main(cfg):
@@ -61,17 +62,17 @@ def main(cfg):
         cfg.nemo.model.test_ds.manifest_filepath = update_manifest_from_json(cfg.dataset.test_ds_manifest_path)
 
         # you need the trained tokenizer if you are restoring from a checkpoint
-        if cfg.pretrained_model.path.endswith('.ckpt'):
-            tokenizer_model_path = Task.get_task(task_id=cfg.tokenizer.task_id).artifacts['tokenizer_model'].get_local_copy()
-            tokenizer_vocab_path = Task.get_task(task_id=cfg.tokenizer.task_id).artifacts['tokenizer_vocab'].get_local_copy()
+        # if cfg.pretrained_model.path.endswith('.ckpt'):
+        tokenizer_model_path = Task.get_task(task_id=cfg.tokenizer.task_id).artifacts['tokenizer_model'].get_local_copy()
+        tokenizer_vocab_path = Task.get_task(task_id=cfg.tokenizer.task_id).artifacts['tokenizer_vocab'].get_local_copy()
 
-            tokenizer_data_root = os.path.abspath('./tokenizer')
-            os.makedirs(tokenizer_data_root, exist_ok=True)
+        tokenizer_data_root = os.path.abspath('./tokenizer')
+        os.makedirs(tokenizer_data_root, exist_ok=True)
 
-            os.rename(tokenizer_model_path, os.path.join(tokenizer_data_root, 'tokenizer.model'))
-            os.rename(tokenizer_vocab_path, os.path.join(tokenizer_data_root, 'vocab.txt'))
+        shutil.copy(tokenizer_model_path, os.path.join(tokenizer_data_root, 'tokenizer.model'))
+        shutil.copy(tokenizer_vocab_path, os.path.join(tokenizer_data_root, 'vocab.txt'))
 
-            cfg.nemo.model.tokenizer.dir = tokenizer_data_root
+        cfg.nemo.model.tokenizer.dir = tokenizer_data_root
         
         asr_model, trainer = prepare_model(cfg)
 

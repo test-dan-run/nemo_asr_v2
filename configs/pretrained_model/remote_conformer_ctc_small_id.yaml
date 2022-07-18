@@ -1,3 +1,4 @@
 name: stt_en_conformer_ctc_small_id_v1.0.0
-model_clearml_id: 019864da64ac4bef80c764305c85096c
+model_clearml_id: 149b76daff3e475a94c6734d5cc69091
+rename_nemo: false
 path: ???
