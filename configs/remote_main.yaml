@@ -1,12 +1,13 @@
 hydra:
   run:
     dir: '.'
-
-task_type: training
+#set to training for training and testing for testing
+task_type: testing
 
 early_stopping:
   patience: 20
 
+#set tokenizer to local_bpe for training, trained_bpe for testing. Also, add the task id to trained_bpe yaml file
 defaults:
   - dataset: remote_indo_cv
   - tokenizer: trained_bpe128
@@ -15,6 +16,7 @@ defaults:
 
 name: ${nemo.name}_${dataset.name}
 
+#put project_name as nemo_asr/${dataset.name}/test when doing testing, else put nemo_asr/${dataset.name}
 clearml:
   base_docker_image: dleongsh/nemo:1.10.0
   project_name: nemo_asr/${dataset.name}/test

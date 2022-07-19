@@ -28,7 +28,7 @@ name: "Conformer-Small-CTC-BPE"
 
 model:
   sample_rate: 16000
-  log_prediction: false # enables logging sample predictions in the output during training
+  log_prediction: true # enables logging sample predictions in the output during training
   ctc_reduction: 'mean_batch'
   skip_nan_grad: false
 
