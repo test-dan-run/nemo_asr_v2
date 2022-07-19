@@ -11,8 +11,8 @@ early_stopping:
 defaults:
   - dataset: remote_indo_cv
   - tokenizer: trained_bpe128
-  - pretrained_model: remote_conformer_ctc_small_id
-  - nemo: conformer_small_bpe_ctc
+  - pretrained_model: remote_conformer_ctc_large_id
+  - nemo: conformer_large_bpe_ctc
 
 name: ${nemo.name}_${dataset.name}
 
