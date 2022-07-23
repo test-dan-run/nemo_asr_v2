@@ -25,7 +25,7 @@ def main(cfg):
             os.rename(cfg.pretrained_model.path, new_model_path)
             cfg.pretrained_model.path = new_model_path
     
-    from local_main import prepare_model, prepare_tokenizer, update_manifest_from_json
+    from local_main import prepare_model, prepare_tokenizer, update_manifests_from_json, update_manifest_paths_from_json
     asr_model, trainer = None, None
 
     if cfg.task_type == 'training':
@@ -37,8 +37,13 @@ def main(cfg):
             cfg.dataset[f'{split}_ds_manifest_path'] = os.path.join(split_dir, f'{split}_manifest.json')
 
         # direct manifest paths
-        cfg.nemo.model.train_ds.manifest_filepath = update_manifest_from_json(cfg.dataset.train_ds_manifest_path)
-        cfg.nemo.model.validation_ds.manifest_filepath = update_manifest_from_json(cfg.dataset.dev_ds_manifest_path)
+        train_path, val_path = update_manifests_from_json([
+            cfg.dataset.train_ds_manifest_path,
+            cfg.dataset.dev_ds_manifest_path,
+            ], remove_unused_chars=cfg.dataset.remove_ununsed_chars, threshold=cfg.dataset.threshold)
+
+        cfg.nemo.model.train_ds.manifest_filepath = train_path
+        cfg.nemo.model.validation_ds.manifest_filepath = val_path
         # cfg.nemo.model.test_ds.manifest_filepath = update_manifest_from_json(cfg.dataset.test_ds_manifest_path)
 
         # set up tokenizer
@@ -59,7 +64,7 @@ def main(cfg):
 
         cfg.nemo.model.train_ds.manifest_filepath = None
         cfg.nemo.model.validation_ds.manifest_filepath = None
-        cfg.nemo.model.test_ds.manifest_filepath = update_manifest_from_json(cfg.dataset.test_ds_manifest_path)
+        cfg.nemo.model.test_ds.manifest_filepath = update_manifest_paths_from_json(cfg.dataset.test_ds_manifest_path)
 
         # you need the trained tokenizer if you are restoring from a checkpoint
         # if cfg.pretrained_model.path.endswith('.ckpt'):

@@ -9,9 +9,9 @@ early_stopping:
 
 #set tokenizer to local_bpe for training, trained_bpe for testing. Also, add the task id to trained_bpe yaml file
 defaults:
-  - dataset: remote_indo_cv
+  - dataset: remote_arabic_cv
   - tokenizer: trained_bpe128
-  - pretrained_model: remote_conformer_ctc_large_id
+  - pretrained_model: remote_conformer_large_bpe_ctc_1_10
   - nemo: conformer_large_bpe_ctc
 
 name: ${nemo.name}_${dataset.name}
@@ -19,7 +19,7 @@ name: ${nemo.name}_${dataset.name}
 #put project_name as nemo_asr/${dataset.name}/test when doing testing, else put nemo_asr/${dataset.name}
 clearml:
   base_docker_image: dleongsh/nemo:1.10.0
-  project_name: nemo_asr/${dataset.name}/test
+  project_name: nemo_asr/${dataset.name}
   task_name: ${nemo.name}
   output_uri: s3://experiment-logging/storage
   queue_name: compute

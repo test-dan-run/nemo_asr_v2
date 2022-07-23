@@ -1,7 +1,7 @@
 import os
 import json
 
-from typing import Tuple, Any
+from typing import Tuple, Any, List, Dict
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from omegaconf import DictConfig, OmegaConf, open_dict
@@ -70,10 +70,105 @@ def prepare_model(cfg: DictConfig) -> Tuple[Any, pl.Trainer]:
 
     return asr_model, trainer
 
+def extract_char_counts_in_items(items: List[Dict[str, Any]]) -> Dict[str, int]:
+    
+    char2count = {}
+    for item in items:
+        text = item['text']
+        for ch in text:
+            if ch not in char2count:
+                char2count[ch] = 0
+            char2count[ch] += 1
+            
+    return char2count
+
+def characters_in_text(text: str, characters:Union[List[str], str]) -> bool:
+    return any([ch in characters for ch in text])
+
+def clean_transcripts_in_manifest(
+    artifact_path: str, output_path: str, 
+    remove_punct: bool, remove_english: bool, 
+    remove_insuff_chars: bool, insuff_thres: Union[int, float] = 0.01
+    ) -> str:
+
+    with open(artifact_path, mode='r', encoding='utf-8') as fr:
+        lines = fr.readlines()
+    items = [json.loads(line) for line in lines]
+
+    if remove_punct:
+        items = [remove_punctuations_in_item(item) for item in items]
+    if remove_english:
+        items = [item for item in items if not characters_in_text(item['text'], ENGLISH_CHARACTERS)]
+    if remove_insuff_chars:
+        char2count = extract_char_counts_in_items(items)
+        min_count = insuff_thres if type(insuff_thres) is int else insuff_thres*len(items)
+        char_to_remove = [k for k in char2count.keys() if char2count[k] < min_count]
+        items = [item for item in items if not characters_in_text(item['text'], char_to_remove)]
+
+    with open(output_path, mode='w', encoding='utf-8') as fw:
+        for item in items:
+            fw.write(json.dumps(item)+'\n')
+
+    return output_path
+
+def update_manifests_from_json(manifest_paths: List[str], remove_unused_chars: bool = True, threshold: int = 50):
+    
+    path2items, char2count = {}, {}
+
+    for path in manifest_paths:
+        with open(path, 'r') as fr:
+            lines = fr.readlines()
+        items = [json.loads(line) for line in lines]
+        path2items[path] = items
+
+        # get character counts
+        for item in items:
+            for ch in item['text']:
+                if ch not in char2count:
+                    char2count[ch] = 0
+                char2count[ch] += 1
+
+    print('=================')
+    print(f'Total items from {len(manifest_paths)} manifest paths: {sum([len(x) for x in path2items.values()])}')
+
+    if remove_unused_chars:
+        char2remove = [k for k in char2count.keys() if char2count[k] < threshold]
+        for path in manifest_paths:
+            path2items[path] = [item for item in path2items[path] if not characters_in_text(item['text'], char2remove)]
+
+    print(f'Total items after removal: {sum([len(x) for x in path2items.values()])}')
+    print(f'Logging counts of all characters:')
+    for k,v in char2count.items():
+        print(f'{k}: {v}')
+    print('=================')
+
+    outputs = []
+    for path, items in path2items.items():
+        outputs.append(update_manifest_paths_from_items(path, items))
+
+    return outputs
+
+def update_manifest_paths_from_items(manifest_path: str, items: List[Dict[str, Any]]) -> str:
+
+    main_dir = os.path.dirname(manifest_path)
+    new_manifest_path = os.path.join(
+        main_dir, 
+        'updated_' + os.path.basename(manifest_path)
+        )
+    
+    with open(new_manifest_path, 'w') as fw:
+        for item in items:
+            item['audio_filepath'] = os.path.join(main_dir, item['audio_filepath'])
+            fw.write(
+                json.dumps(item) + '\n'
+            )
+
+    return new_manifest_path
+
 # manifest_path should be located in the same directory as the audio files
 # update manifest to update relative audio_filepaths to absolute paths
 # returns new manifest path
-def update_manifest_from_json(manifest_path: str) -> str:
+def update_manifest_paths_from_json(manifest_path: str) -> str:
 
     main_dir = os.path.dirname(manifest_path)
     new_manifest_path = os.path.join(
@@ -142,9 +237,9 @@ def main(cfg):
 
     if cfg.task_type == 'training':
         # direct manifest paths
-        cfg.nemo.model.train_ds.manifest_filepath = update_manifest_from_json(cfg.dataset.train_ds_manifest_path)
-        cfg.nemo.model.validation_ds.manifest_filepath = update_manifest_from_json(cfg.dataset.dev_ds_manifest_path)
-        cfg.nemo.model.test_ds.manifest_filepath = update_manifest_from_json(cfg.dataset.test_ds_manifest_path)
+        cfg.nemo.model.train_ds.manifest_filepath = update_manifest_paths_from_json(cfg.dataset.train_ds_manifest_path)
+        cfg.nemo.model.validation_ds.manifest_filepath = update_manifest_paths_from_json(cfg.dataset.dev_ds_manifest_path)
+        cfg.nemo.model.test_ds.manifest_filepath = update_manifest_paths_from_json(cfg.dataset.test_ds_manifest_path)
 
         # set up tokenizer
         cfg = prepare_tokenizer(cfg)
@@ -154,6 +249,17 @@ def main(cfg):
 
         trainer.fit(asr_model)
     # test(cfg, asr_model, trainer)
+
+    if cfg.task_type == 'testing':
+        cfg.nemo.model.train_ds.manifest_filepath = None
+        cfg.nemo.model.validation_ds.manifest_filepath = None
+        cfg.nemo.model.test_ds.manifest_filepath = update_manifest_paths_from_json(cfg.dataset.test_ds_manifest_path)
+        cfg.nemo.model.tokenizer.dir = '/nemo_asr_v2/pretrained_model/'
+        
+        asr_model, trainer = prepare_model(cfg)
+
+        if asr_model.prepare_test(trainer):
+            trainer.test(asr_model)
 
 if __name__ == '__main__':
     main()
