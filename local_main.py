@@ -1,7 +1,7 @@
 import os
 import json
 
-from typing import Tuple, Any, List, Dict
+from typing import Tuple, Any, List, Dict, Union
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from omegaconf import DictConfig, OmegaConf, open_dict

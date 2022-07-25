@@ -127,9 +127,9 @@ model:
     conv_norm_type: 'batch_norm' # batch_norm or layer_norm
 
     ### regularization
-    dropout: 0.2 # The dropout used in most of the Conformer Modules
-    dropout_emb: 0.2 # The dropout used for embeddings
-    dropout_att: 0.2 # The dropout for multi-headed attention modules
+    dropout: 0.1 # The dropout used in most of the Conformer Modules
+    dropout_emb: 0.1 # The dropout used for embeddings
+    dropout_att: 0.1 # The dropout for multi-headed attention modules
 
   decoder:
     _target_: nemo.collections.asr.modules.ConvASRDecoder
