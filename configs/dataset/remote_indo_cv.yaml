@@ -1,9 +1,12 @@
-name: jtubespeech_indo
+name: indo_commonvoice_v10.0
 
-train_clearml_id: fe686b01c20c42958c0507d6891a6dc3
-dev_clearml_id: 990e00aa328f46218d32f85817fa7f56
-test_clearml_id: 56080e6a42074447a70a93cc5c920af5
+train_clearml_id: a91197e14dbc4f93be9b3e6e5ce20941
+dev_clearml_id: 773db831b60b4beab9e6b7216831fd18
+test_clearml_id: 7216c105d3b144508ad7e47a5ee35450
 
 train_ds_manifest_path: ???
 dev_ds_manifest_path: ???
 test_ds_manifest_path: ???
+
+remove_unused_chars: true
+threshold: 50

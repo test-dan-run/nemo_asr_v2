@@ -2,15 +2,15 @@ hydra:
   run:
     dir: '.'
 #set to training for training and testing for testing
-task_type: testing
+task_type: training
 
 early_stopping:
-  patience: 20
+  patience: 15
 
 #set tokenizer to local_bpe for training, trained_bpe for testing. Also, add the task id to trained_bpe yaml file
 defaults:
-  - dataset: remote_arabic_cv
-  - tokenizer: trained_bpe128
+  - dataset: remote_indo_cv
+  - tokenizer: local_bpe128
   - pretrained_model: remote_conformer_large_bpe_ctc_1_10
   - nemo: conformer_large_bpe_ctc
 

@@ -40,7 +40,7 @@ def main(cfg):
         train_path, val_path = update_manifests_from_json([
             cfg.dataset.train_ds_manifest_path,
             cfg.dataset.dev_ds_manifest_path,
-            ], remove_unused_chars=cfg.dataset.remove_ununsed_chars, threshold=cfg.dataset.threshold)
+            ], remove_unused_chars=cfg.dataset.remove_unused_chars, threshold=cfg.dataset.threshold)
 
         cfg.nemo.model.train_ds.manifest_filepath = train_path
         cfg.nemo.model.validation_ds.manifest_filepath = val_path
