@@ -186,51 +186,6 @@ def update_manifest_paths_from_json(manifest_path: str) -> str:
 
     return new_manifest_path
 
-# def test(cfg: DictConfig, asr_model: Any = None, trainer: pl.Trainer = None) -> None:
-
-#     if asr_model is None and trainer is None:
-#         cfg = prepare_dataset(cfg, test_only=True)
-#         cfg = prepare_tokenizer(cfg)
-#         asr_model, trainer = prepare_model(cfg)
-
-#     if hasattr(cfg.model, 'test_ds') and cfg.model.test_ds.manifest_filepath is not None:
-#         if asr_model.prepare_test(trainer):
-#             trainer.test(asr_model)
-
-#     else:
-#         print('No test dataset found.')
-#         return
-
-#     return asr_model, trainer
-
-# def transcribe(cfg: DictConfig, asr_model: Any = None, trainer: pl.Trainer = None, output_path: str = 'output.json') -> None:
-
-#     if asr_model is None and trainer is None:
-#         cfg = prepare_dataset(cfg, test_only=True)
-#         cfg = prepare_tokenizer(cfg)
-#         asr_model, trainer = prepare_model(cfg)
-
-#     asr_model.set_trainer(trainer)
-#     asr_model = asr_model.eval()
-    
-#     with open(cfg.model.test_ds.manifest_filepath, 'r', encoding='utf-8') as fr:
-#         lines = fr.readlines()
-    
-#     items = [json.loads(item.strip('\r\n')) for item in lines]
-#     audio_filepaths = [item['audio_filepath'] for item in items]
-#     hypotheses = asr_model.transcribe(
-#         audio_filepaths, 
-#         batch_size = cfg.model.test_ds.batch_size,
-#         num_workers = cfg.model.test_ds.num_workers)
-#     for item, hypo in zip(items, hypotheses):
-#         item['hypothesis'] = hypo
-
-#     with open(output_path, 'w', encoding='utf-8') as fw:
-#         for item in items:
-#             fw.write(json.dumps(item) + '\n')
-
-#     return output_path
-
 @hydra_runner(config_path='./configs', config_name='main')
 def main(cfg):
     asr_model, trainer = None, None

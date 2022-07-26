@@ -5,7 +5,7 @@ services:
   local:
     stdin_open: true
     tty: true
-    image: nemo:1.10.0
+    image: dleongsh/nemo:1.10.0
     # runtime: nvidia
     # environment:
     #   NVIDIA_VISIBLE_DEVICES: 0
@@ -15,8 +15,9 @@ services:
           devices:
             - capabilities: [gpu]
     volumes:
-      - /mnt/c/projects/asr/nemo_asr_v2:/nemo_asr_v2
-      - /mnt/d/datasets/asr/commonvoice_v10/ar:/dataset
+      - /mnt/c/Users/tjinghua/projects/nemo_asr_v2:/nemo_asr_v2
+      # - /mnt/d/datasets/asr/commonvoice_v10/ar:/dataset
+      - /mnt/d/datasets/jtubespeech/processed/test:/datasets
     ulimits:
       memlock: -1
       stack: 67108864

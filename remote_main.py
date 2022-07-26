@@ -1,4 +1,4 @@
-from clearml import Task, Dataset, Model, StorageManager
+from clearml import Task, Dataset, Model
 from utils.hydra import hydra_runner
 import os
 import shutil
@@ -44,7 +44,8 @@ def main(cfg):
 
         cfg.nemo.model.train_ds.manifest_filepath = train_path
         cfg.nemo.model.validation_ds.manifest_filepath = val_path
-        # cfg.nemo.model.test_ds.manifest_filepath = update_manifest_from_json(cfg.dataset.test_ds_manifest_path)
+        if cfg.dataset.get('test_ds_manifest_path', None):
+            cfg.nemo.model.test_ds.manifest_filepath = update_manifest_paths_from_json(cfg.dataset.test_ds_manifest_path)
 
         # set up tokenizer
         cfg = prepare_tokenizer(cfg)

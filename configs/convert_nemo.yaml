@@ -1,0 +1,17 @@
+defaults:
+  - nemo: conformer_large_bpe_ctc
+
+pretrained_dir: /nemo_asr_v2/pretrained_model/Conformer-Large-CTC-BPE-Indo-CV
+pretrained_model:
+  path: ${pretrained_dir}/best.ckpt
+
+nemo:
+  model:
+    train_ds:
+      manifest_filepath: null
+    validation_ds:
+      manifest_filepath: null
+    tokenizer:
+      dir: ${pretrained_dir}
+      
+name: ${nemo.name}
